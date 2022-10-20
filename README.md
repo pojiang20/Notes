@@ -8,6 +8,7 @@ study notes
 ---- | ----
 基础 | [小问题集合](./golang/%E5%B0%8F%E9%97%AE%E9%A2%98.md)
 总结 | [返回值vs返回指针](./golang/%E8%BF%94%E5%9B%9E%E6%8C%87%E9%92%88vs%E8%BF%94%E5%9B%9E%E5%80%BC.md)
+笔记 | [golang类型转换](./golang/golang%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2.md)
 
 ## git
 类型 | 文章
