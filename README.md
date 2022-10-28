@@ -1,6 +1,4 @@
 # Notes
-study notes
-
 这是我在学习过程中的记录和总结。
 
 ## golang
