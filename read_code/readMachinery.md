@@ -320,6 +320,22 @@ func (worker *Worker) Process(signature *tasks.Signature) error {
 }
 
 ```
+#### 结果`AsyncResult`
+由于多个`gorotine`是异步执行的，然后会`setXX()`来向后端设置状态，因此当前任务状态是不确定的，这里的`AsyncResult`提供的是后端的查询操作，在需要获取结果时调用查询来获取状态。
+```go
+// Get returns task results (synchronous blocking call)
+func (asyncResult *AsyncResult) Get(sleepDuration time.Duration) ([]reflect.Value, error) {
+	for {
+		results, err := asyncResult.Touch()
+
+		if results == nil && err == nil {
+			time.Sleep(sleepDuration)
+		} else {
+			return results, err
+		}
+	}
+}
+```
 ### 任务编排
 `Machinery`包含`Group`、`Chain`、`Chord`三种编排方式。
 ```go
@@ -343,9 +359,8 @@ type Chord struct {
 }
 ```
 #### group
-`group`就是维护了一个`groupID`作为统一`ID`，以及数组包含一组签名。分发`group`就是遍历签名并且发布即可，这样就可以做到异步执行`group`中的任务。相应的，使用了`waitGroup`保证`group`中所有任务完成再返回。这样就能实现异步执行，统一返回`group`的效果。
-
-- [ ] group好像只保证统一分发的效果？不保证统一返回？
+`group`就是维护了一个`groupID`作为统一`ID`，以及数组包含一组签名。分发`group`就是遍历签名并且发布即可，这样就可以做到异步执行`group`中的任务。
+分发后，`group`并不保证任务的统一完成，但可以用`Bachend.GroupCompleted()`来查看该`group`是否完成
 ```go
 // SendGroupWithContext will inject the trace context in all the signature headers before publishing it
 func (server *Server) SendGroupWithContext(ctx context.Context, group *tasks.Group, sendConcurrency int) ([]*result.AsyncResult, error) {
@@ -403,5 +418,129 @@ func (server *Server) SendGroupWithContext(ctx context.Context, group *tasks.Gro
 	case <-done:
 		return asyncResults, nil
 	}
+}
+```
+#### chord
+`chord`是在`group`完成后执行回调函数，其实现逻辑主要在`taskSucceeded`。`ChordCallback`判断回调函数存在，如果存在回调函数且`group`完成就会将`group`执行结果作为参数执行`callback`。
+```go
+// taskSucceeded updates the task state and triggers success callbacks or a
+// chord callback if this was the last task of a group with a chord callback
+func (worker *Worker) taskSucceeded(signature *tasks.Signature, taskResults []*tasks.TaskResult) error {
+	...
+	// There is no chord callback, just return
+	if signature.ChordCallback == nil {
+		return nil
+	}
+
+	// Check if all task in the group has completed
+	groupCompleted, err := worker.server.GetBackend().GroupCompleted(
+		signature.GroupUUID,
+		signature.GroupTaskCount,
+	)
+	if err != nil {
+		return fmt.Errorf("Completed check for group %s returned error: %s", signature.GroupUUID, err)
+	}
+
+	// If the group has not yet completed, just return
+	if !groupCompleted {
+		return nil
+	}
+	...
+
+	// Trigger chord callback
+	shouldTrigger, err := worker.server.GetBackend().TriggerChord(signature.GroupUUID)
+	if err != nil {
+		return fmt.Errorf("Triggering chord for group %s returned error: %s", signature.GroupUUID, err)
+	}
+
+	// Chord has already been triggered
+	if !shouldTrigger {
+		return nil
+	}
+
+	// Get task states
+	taskStates, err := worker.server.GetBackend().GroupTaskStates(
+		signature.GroupUUID,
+		signature.GroupTaskCount,
+	)
+	if err != nil {
+		log.ERROR.Printf(
+			"Failed to get tasks states for group:[%s]. Task count:[%d]. The chord may not be triggered. Error:[%s]",
+			signature.GroupUUID,
+			signature.GroupTaskCount,
+			err,
+		)
+		return nil
+	}
+
+	// Append group tasks' return values to chord task if it's not immutable
+	for _, taskState := range taskStates {
+		if !taskState.IsSuccess() {
+			return nil
+		}
+
+		if signature.ChordCallback.Immutable == false {
+			// Pass results of the task to the chord callback
+			for _, taskResult := range taskState.Results {
+				signature.ChordCallback.Args = append(signature.ChordCallback.Args, tasks.Arg{
+					Type:  taskResult.Type,
+					Value: taskResult.Value,
+				})
+			}
+		}
+	}
+
+	// Send the chord task
+	_, err = worker.server.SendTask(signature.ChordCallback)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+```
+#### chain
+链式执行的基本逻辑就是，按照任务的先后构造一个链表，并且在当前任务完成后尝试访问该任务的`next`，并且把当前执行结果作为下一个执行的入参。
+这是链式执行的初始化`signatures[i-1].OnSuccess = []*Signature{signatures[i]}`每一个`signatures`的`OnSuccess`是下一个`signatures`
+```go
+// NewChain creates a new chain of tasks to be processed one by one, passing
+// results unless task signatures are set to be immutable
+func NewChain(signatures ...*Signature) (*Chain, error) {
+	// Auto generate task UUIDs if needed
+	for _, signature := range signatures {
+		if signature.UUID == "" {
+			signatureID := uuid.New().String()
+			signature.UUID = fmt.Sprintf("task_%v", signatureID)
+		}
+	}
+
+	for i := len(signatures) - 1; i > 0; i-- {
+		if i > 0 {
+			signatures[i-1].OnSuccess = []*Signature{signatures[i]}
+		}
+	}
+
+	chain := &Chain{Tasks: signatures}
+
+	return chain, nil
+}
+```
+`worker`执行完当前任务之后，会遍历`OnSuccess`并且`worker.server.SendTask(successTask)`加入`worker`执行。
+```go
+func (worker *Worker) taskSucceeded(signature *tasks.Signature, taskResults []*tasks.TaskResult) error {
+    ...    
+    for _, successTask := range signature.OnSuccess {
+		if signature.Immutable == false {
+			// Pass results of the task to success callbacks
+			for _, taskResult := range taskResults {
+				successTask.Args = append(successTask.Args, tasks.Arg{
+					Type:  taskResult.Type,
+					Value: taskResult.Value,
+				})
+			}
+		}
+		worker.server.SendTask(successTask)
+	}
+    ...
 }
 ```
