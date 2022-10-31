@@ -19,3 +19,8 @@
 类型 | 文章
 ---- | ----
 笔记 | [设计模式之美](./design_patterns/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%BE%8E%E7%AC%94%E8%AE%B0.md)
+
+## 读代码
+文章 | 简介
+---- | ----
+[machinery源码笔记](./read_code/readMachinery.md) | machinery是分布式任务处理工具，它由server提供接口、broker分发、worker执行，支持任务的注册和链式、批量、回调执行操作。
