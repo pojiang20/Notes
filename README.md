@@ -24,3 +24,6 @@
 文章 | 简介
 ---- | ----
 [machinery源码笔记](./read_code/readMachinery.md) | machinery是分布式任务处理工具，它由server提供接口、broker分发、worker执行，支持任务的注册和链式、批量、回调执行操作。
+
+## 其他
+[零碎知识](./other/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86%E7%82%B9.md)
