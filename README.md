@@ -24,6 +24,7 @@
 文章 | 简介
 ---- | ----
 [machinery源码笔记](./read_code/readMachinery.md) | machinery是分布式任务处理工具，它由server提供接口、broker分发、worker执行，支持任务的注册和链式、批量、回调执行操作。
+[dumpling笔记](./read_code/Tidb%20dumpling.md) | dumpling是Tidb的数据导出工具，支持多格式导出、上传到s3、分文件存储等功能，这里对其部分功能做了简单的笔记。
 
 ## 其他
 [零碎知识](./other/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86%E7%82%B9.md)
