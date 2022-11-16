@@ -8,7 +8,7 @@
 总结 | [channel集合](./golang/channel.md)
 总结 | [指针类型和非指针类型实现接口](/golang/golang%E6%8C%87%E9%92%88%E5%92%8C%E9%9D%9E%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0%E6%8E%A5%E5%8F%A3.md)
 总结 | [返回值vs返回指针](./golang/%E8%BF%94%E5%9B%9E%E6%8C%87%E9%92%88vs%E8%BF%94%E5%9B%9E%E5%80%BC.md)
-笔记 | [golang类型转换](./golang/golang%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2.md)
+笔记 | [golang类型转换和比较](./golang/golang%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2.md)
 
 ## git
 类型 | 文章
