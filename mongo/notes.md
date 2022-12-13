@@ -29,3 +29,20 @@ WriteResult({ "nInserted" : 1 })    //此处应答信息显示为1个文档已�
 - 默认{j:false}，如果要求Primary写入持久化了才向客户端确认，则指定该选项为true
 3. wtimeout: 写入超时时间，仅w的值大于1时有效。
 - 当指定{w: }时，数据需要成功写入number个节点才算成功，如果写入过程中有节点故障，可能导致这个条件一直不能满足，从而一直不能向客户端发送确认结果，针对这种情况，客户端可设置wtimeout选项来指定超时时间，当写入过程持续超过该时间仍未结束，则认为写入失败。
+
+#### cmd中使用数组而不是map
+golang使用mongo过程中，会用到bson格式，这里有如下两种。
+```go
+type D []DocElem
+type M map[string]interface{}
+```
+bson.D是一个数组，存有的DocElem是k-v。bson.M是map，直接存储k-v。golang的map是无序的，有时候需要保证数据相对顺序，这时候就需要使用bson.D。比如下面的场景：
+```go
+cmd := bson.D{
+    {Name: "insert", Value: w.session.Coll.Name},
+    {Name: "documents", Value: data},
+    //其他参数
+}
+err = w.session.Coll.Database.Run(cmd, &res)
+```
+这种情况如果使用map，就会因为map的不确定导致insert位置的不确定，从而导致命令错误。
