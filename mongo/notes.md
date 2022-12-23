@@ -46,3 +46,12 @@ cmd := bson.D{
 err = w.session.Coll.Database.Run(cmd, &res)
 ```
 这种情况如果使用map，就会因为map的不确定导致insert位置的不确定，从而导致命令错误。
+
+#### mongo push
+push操作可以直接追加内容，例如下面的例子，就是给`_id=1`的条目追加`scores=89`内容
+```javascript
+db.students.update(
+   { _id: 1 },
+   { $push: { scores: 89 } }
+)
+```
