@@ -55,3 +55,6 @@ db.students.update(
    { $push: { scores: 89 } }
 )
 ```
+
+#### mongo contains
+mongoDB中用正则来实现『字段中存在xx』的功能，如`db.testDB.find({_id:{$regex:"yyy"}})`这条命令查找的就是`_id`中存在`yyy`的所有数据
