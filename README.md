@@ -23,9 +23,10 @@
 ## 读代码
 文章 | 简介
 ---- | ----
-[machinery源码笔记](./read_code/readMachinery.md) | machinery是分布式任务处理工具，它由server提供接口、broker分发、worker执行，支持任务的注册和链式、批量、回调执行操作。
+[machinery源码笔记](https://github.com/pojiang20/machineryDemo) | machinery是分布式任务处理工具，它由server提供接口、broker分发、worker执行，支持任务的注册和链式、批量、回调执行操作。
 [dumpling笔记](./read_code/dumpling.md) | dumpling是Tidb的数据导出工具，支持多格式导出、上传到s3、分文件存储等功能，这里对其部分功能做了简单的笔记。
 [cron笔记](https://github.com/pojiang20/cronDemo) | cron是golang中管理定时任务的库，可以添加一系列任务并制定执行规则来执行这些任务。其关键在于对一系列任务进行调度。
+[go-redis pool笔记](https://github.com/pojiang20/redis-pool) | demo简单使用连接池，并学习go-redis中连接池管理，且自己简单实现了连接池的put\get。
 
 ## 其他
 [零碎知识](./other/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86%E7%82%B9.md)
