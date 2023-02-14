@@ -32,3 +32,40 @@ select {
        statement(s);
 }
 ```
+
+### range对channel访问是send+检查
+对于已经close关闭的channel，接收者仍然可以从中读数据，close后channel中没有数据也不会阻塞，得到nil。
+对于已经close关闭的channel，range读取channel会退出。
+结论：`range <=> res,ok := <-ch`
+```go
+func Test_range(t *testing.T) {
+	ch := make(chan struct{})
+
+	////箭头获取：会打印
+	//go func() {
+	//	res := <-ch
+	//	log.Printf("res: %v", res)
+	//}()
+	//close(ch)
+	//time.Sleep(time.Second)
+
+	////range获取：不会打印
+	//go func() {
+	//	for res := range ch {
+	//		log.Printf("res: %v", res)
+	//	}
+	//}()
+	//close(ch)
+	//time.Sleep(time.Second)
+
+	//range获取
+	//可打印
+	go func() {
+		for res := range ch {
+			log.Printf("res: %v", res)
+		}
+	}()
+	ch <- struct{}{}
+	time.Sleep(time.Second)
+}
+```
