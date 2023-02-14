@@ -10,7 +10,7 @@ db.collection.find({ field: {
                       $lt: UUID("00000000-0000-0000-0000-000000000000") 
 }})
 ```
-
+[来源](https://stackoverflow.com/questions/66426027/how-to-query-by-bindata-subtype)
 #### mongo的writeConcer
 write concern是多服务高可用数据库的一个重要概念。它允许你定义，对于一个写，在返回完成之前，它必须经历哪些失败情况。MongoDB支持的writeConcern选项如下
 1. w：数据写入到number个节点才向客户端确认
@@ -57,4 +57,5 @@ db.students.update(
 ```
 
 #### mongo contains
-mongoDB中用正则来实现『字段中存在xx』的功能，如`db.testDB.find({_id:{$regex:"yyy"}})`这条命令查找的就是`_id`中存在`yyy`的所有数据
+mongoDB中用正则来实现『字段中存在xx』的功能，如`db.testDB.find({_id:{$regex:"yyy"}})`这条命令查找的就是`_id`中存在`yyy`的所有数据。
+`db.testDB.find({_id:{$regex:"^yyy"}})`查询以yyy为开头的所有数据。
