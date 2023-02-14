@@ -116,3 +116,58 @@ do
     command
 done
 ```
+
+### awk
+awk是一种文本分析工具，其基本格式为『awk \`条件1 {动作 1} 条件2 {动作 2} ...\` 文件名』，它读入有\n换行符分割的一条记录，荣获将记录按照指定的分隔符划分域，$0表示所有域，$1表示第一个域以此类推。默认域分隔符是space或tab
+
+如下面这个例子，就是查看df -h输出的结果中，筛选出第1和3个区域的值。
+```shell
+df -h | awk '{print $1 "\t" $3}'
+Filesystem	Used
+/dev/disk1s5s1	24Gi
+devfs	191Ki
+/dev/disk1s4	3.0Gi
+/dev/disk1s2	324Mi
+/dev/disk1s6	107Mi
+/dev/disk1s1	132Gi
+map	0Bi
+/dev/disk1s5	24Gi
+```
+
+-F指定域分隔符为":"
+```shell
+cat /etc/passwd | awk -F ':' '{print $1}'
+nobody
+root
+daemon
+```
+#### 条件
+先执行BEGIN，然后读取文件，以\n作为一条记录，然后对每条记录以域分隔符划分域得到一组域，执行action。所有记录都读取和执行完毕之后，再执行END。
+```shell
+df -h | awk 'BEGIN {print "start"} {print $1} END {print "end"}'
+start
+Filesystem
+/dev/disk1s5s1
+devfs
+/dev/disk1s4
+/dev/disk1s2
+/dev/disk1s6
+/dev/disk1s1
+map
+/dev/disk1s5
+end
+```
+
+也可以在行为之前添加条件，这里筛选出/dev/
+```shell
+df -h | awk 'BEGIN {print "start"} /dev/{print $1} END {print "end"}'
+start
+/dev/disk1s5s1
+devfs
+/dev/disk1s4
+/dev/disk1s2
+/dev/disk1s6
+/dev/disk1s1
+/dev/disk1s5
+end
+```
