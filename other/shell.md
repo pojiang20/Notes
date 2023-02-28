@@ -5,6 +5,10 @@
 #### ps的aux和ef区别
 都是输出所有进程信息，只是输出格式不同。
 
+#### 先筛选再将筛选结果作为参数批量操作
+比如先筛选启动的`mongo`进程获取`pid`，再将所有相关的`pid`都`kill`。
+`ps -ef | grep mongo | awk '{print $2}'| xargs kill`，这里筛选出进程，再用awk获取第二列字段，再用xargs作为kill参数结束进程。
+
 
 ## 学习笔记
 #### shell脚本的几种执行方式
