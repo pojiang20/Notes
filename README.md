@@ -32,4 +32,7 @@
 [go-redis pool笔记](https://github.com/pojiang20/redis-pool) | demo简单使用连接池，并学习go-redis中连接池管理，且自己简单实现了连接池的put\get。
 
 ## 其他
+类型 | 文章
+---- | ----
+笔记 | [shell笔记](./other/shell.md)和[练习](./other/shellPractice/)
 [零碎知识](./other/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AF%86%E7%82%B9.md)
