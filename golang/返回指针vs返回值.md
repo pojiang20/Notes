@@ -28,7 +28,7 @@ func main() {
 ```
 即这种情况造成逃逸到堆上了。
 #### interface{}动态类型逃逸
-由于`interface{}`空接口可以表示任意的类型，如果参数为`interface{}`，编译期间很难确定其参数的具体类型，也会发生逃逸。如下面`Println`的interface{}参数
+由于`interface{}`空接口可以表示任意的类型，如果参数为`interface{}`，编译期间很难确定其参数的具体类型，也会发生逃逸。如下面`Println`的`interface{}`参数
 ```go
 func main() {
 	demo := createDemo("demo")

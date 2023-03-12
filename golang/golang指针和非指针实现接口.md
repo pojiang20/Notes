@@ -1,6 +1,6 @@
 先介绍背景和每一个例子，最后有完整代码。
 #### 定义
-定义了`Intr`接口类型，`noPointer`是值接收者，`reciverPointer`是指针接受者。`pointerArgument`是以指针作为参数，`noPointerArgument`是以值作为参数。
+定义了`Intr`接口类型，`noPointer`是值接收者，`receiverPointer`是指针接受者。`pointerArgument`是以指针作为参数，`noPointerArgument`是以值作为参数。
 ```go
 type Intr interface {
 	print()
@@ -13,11 +13,11 @@ func (t noPointer) print() {
 	fmt.Println("noPointer")
 }
 
-type reciverPointer struct {
+type receiverPointer struct {
 }
 
-func (s *reciverPointer) print() {
-	fmt.Println("reciverPointer")
+func (s *receiverPointer) print() {
+	fmt.Println("receiverPointer")
 }
 func pointerArgument(i *Intr) {
 	(*i).print()
@@ -36,15 +36,15 @@ noPointerArgument(t1)
 不可执行：符合函数入参的非指针，但由于方法接收为指针，因此无法执行
 传入指针类型即可执行
 ```go
-	// t2 := reciverPointer{}
+	// t2 := receiverPointer{}
 	// noPointerArgument(t2)
-	t2_1 := reciverPointer{}
+	t2_1 := receiverPointer{}
 	noPointerArgument(&t2_1)
 ```
 #### 指针接收者+值入参
-可执行：因为`*reciverPointer`实现了`Intr`
+可执行：因为`*receiverPointer`实现了`Intr`
 ```go
-	t3 := &reciverPointer{}
+	t3 := &receiverPointer{}
 	noPointerArgument(t3)
 ```
 #### 值接收者+指针入参
@@ -57,13 +57,13 @@ noPointerArgument(t1)
 	pointerArgument(&t4_2)
 ```
 #### 指针接收者+指针入参
-`*reciverPointer实现了Intr`所以`var t7 Intr = t6`正确，然后传入`pointerArgument(&t7)`指针类型即可。
+`*receiverPointer实现了Intr`所以`var t7 Intr = t6`正确，然后传入`pointerArgument(&t7)`指针类型即可。
 ```go
-//不可执行：*reciverPointer没有实现*Intr（是*reciverPointer实现了Intr）
-	//t5 := &reciverPointer{}
+//不可执行：*receiverPointer没有实现*Intr（是*receiverPointer实现了Intr）
+	//t5 := &receiverPointer{}
 	//pointerArgument(t5)
-	//可执行：*reciverPointer实现了Intr
-	t6 := &reciverPointer{}
+	//可执行：*receiverPointer实现了Intr
+	t6 := &receiverPointer{}
 	//因此可以转型
 	var t7 Intr = t6
 	//传入*Intr
@@ -82,11 +82,11 @@ func (t noPointer) print() {
 	fmt.Println("noPointer")
 }
 
-type reciverPointer struct {
+type receiverPointer struct {
 }
 
-func (s *reciverPointer) print() {
-	fmt.Println("reciverPointer")
+func (s *receiverPointer) print() {
+	fmt.Println("receiverPointer")
 }
 func pointerArgument(i *Intr) {
 	(*i).print()
@@ -100,14 +100,14 @@ func Test_mytest(t *testing.T) {
 	noPointerArgument(t1)
 
 	//不可执行：符合函数入参的非指针，但由于方法接收为指针，因此无法执行
-	//t2 := reciverPointer{}
+	//t2 := receiverPointer{}
 	//noPointerArgument(t2)
     //可执行写法
-	t2_1 := reciverPointer{}
+	t2_1 := receiverPointer{}
 	noPointerArgument(&t2_1)
 
-	//可执行：*reciverPointer实现了Intr
-	t3 := &reciverPointer{}
+	//可执行：*receiverPointer实现了Intr
+	t3 := &receiverPointer{}
 	noPointerArgument(t3)
 
 	//不可执行：*noPointer没有实现*Intr（是noPointer实现了Intr）
@@ -119,11 +119,11 @@ func Test_mytest(t *testing.T) {
 	var t4_2 Intr = t4_1
 	pointerArgument(&t4_2)
 
-	//不可执行：*reciverPointer没有实现*Intr（是*reciverPointer实现了Intr）
-	//t5 := &reciverPointer{}
+	//不可执行：*receiverPointer没有实现*Intr（是*receiverPointer实现了Intr）
+	//t5 := &receiverPointer{}
 	//pointerArgument(t5)
-	//可执行：*reciverPointer实现了Intr
-	t6 := &reciverPointer{}
+	//可执行：*receiverPointer实现了Intr
+	t6 := &receiverPointer{}
 	//因此可以转型
 	var t7 Intr = t6
 	//传入*Intr
