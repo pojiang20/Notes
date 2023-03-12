@@ -1,4 +1,4 @@
-git log可以看到当前有两个个提交
+`git log`可以看到当前有两个提交
 ```text
 commit 80b5e067aa7e16ca19fe2470821a341fec73f094 (HEAD -> testRebase)
 Author: pojiang20 <1021465760@qq.com>
