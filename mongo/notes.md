@@ -59,3 +59,28 @@ db.students.update(
 #### mongo contains
 mongoDB中用正则来实现『字段中存在xx』的功能，如`db.testDB.find({_id:{$regex:"yyy"}})`这条命令查找的就是`_id`中存在`yyy`的所有数据。
 `db.testDB.find({_id:{$regex:"^yyy"}})`查询以yyy为开头的所有数据。
+
+#### csv导入命令
+`mongoimport --db upload_data --collection bigfile --type csv --headerline --ignoreBlanks --file /Users/ziyang/qbox/static/bigfile.csv`
+
+#### 使用gte查询的好处
+使用`gte`查询的好处是，可以用查询得到的第一条数据用于验证。
+
+#### hidden节点
+> A hidden member maintains a copy of the primary's data set but is invisible to client applications. Hidden members are good for workloads with different usage patterns from the other members in the replica set. Hidden members must always be priority 0 members and so cannot become primary.[参考](https://www.mongodb.com/docs/manual/core/replica-set-hidden-member/)
+
+隐藏节点处理请求，如果通过隐藏节点获取数据，可以减少服务器压力。`db.adminCommand({replSetGetConfig:1})`可以查看节点是否是`hidden`节点，即观察`Members`的`hidden`字段是否为`true`
+```shell
+"config" : {
+		"_id" : "shard1",
+		"version" : 1,
+		"protocolVersion" : NumberLong(1),
+		"members" : [
+			{
+				"_id" : 0,
+				"hidden" : false,
+			},
+			{
+			}
+		],
+```
