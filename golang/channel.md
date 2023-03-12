@@ -69,3 +69,44 @@ func Test_range(t *testing.T) {
 	time.Sleep(time.Second)
 }
 ```
+
+### close+channel同时启动多个协程
+首先构造一个无缓冲的`channel`
+```go
+ready := make(chan struct{})
+```
+然后使用`<-ready`阻塞某一段代码，最后在需要启动的时候使用`close（ready)`，这样所有`<-ready`被阻塞的`channel`就会非阻塞，来运行后续代码。
+#### 等待完成
+```go
+done := make(chan struct{})
+go func() {
+  doA()
+  close(done)
+}()
+// 等待A完成
+<-done
+```
+#### 同时启动
+```go
+start := make(chan struct{})
+for i := 0; i < 10000; i++ {
+  go func() {
+    <-start // wait for the start channel to be closed
+    doWork(i) // do something
+ }()
+}
+//这时候所有阻塞的协程都可以继续运行
+close(start)
+```
+#### 暂停循环
+```go
+loop:
+for {
+  select {
+  case m := <-email:
+    sendEmail(m)
+  case <-stop: // triggered when the stop channel is closed
+    break loop // exit
+  }
+}
+```
