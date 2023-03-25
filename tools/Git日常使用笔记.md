@@ -53,3 +53,11 @@ git checkout -b 新的本地分支名称 远端仓库/远端分支名
 `git merge`是把两个分支的新修改的内容以及最近的共同祖先进行三方合并，结果是生成一个新的快照。`git commit`的路径是二合一
 `git rebase`是对于两个分支C4、C3，找到共同最近的祖先C2，把C4自己的修改应用到C3上，得到新的快照。`git commit`的路径是一条，因此rebase更加简洁。
 [参考](https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%8F%98%E5%9F%BA)
+
+
+#### 如何修改git commit
+1. git rebase -i HEAD~n来表示向后查看多少个提交记录以找到要修改的提交
+2. 将指令修改了edit
+3. git commit --amend，修改对应commit
+4. git rebase --continue提交
+5. 同步到远程：git push --force
