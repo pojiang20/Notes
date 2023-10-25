@@ -1,3 +1,6 @@
+### golang为什么倡导csp?
+- 性能优势：Go 语言通过 goroutine 和 channel 来实现 CSP 模型，相比于传统的线程和锁模型，goroutine 更轻量，资源占用更少，可以创建大量的 goroutine 来处理任务。channel 提供了一种安全的方式来交换数据，避免了竞态条件。
+
 ### 未初始化的channel
 参考 [https://stackoverflow.com/questions/39015602/how-does-a-non-initialized-channel-behave](https://stackoverflow.com/questions/39015602/how-does-a-non-initialized-channel-behave)
 未初始化的`channel`值为`nil`，对于`nil`的读和写，有如下规则：
