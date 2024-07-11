@@ -61,3 +61,69 @@ git checkout -b 新的本地分支名称 远端仓库/远端分支名
 3. git commit --amend，修改对应commit
 4. git rebase --continue提交
 5. 同步到远程：git push --force
+
+#### 处理分支时，使用git rebase和git merge的区别
+下面合并分支的过程，使用了git rebase
+```
+ 1761  git pull
+ 1762  git pull origin master
+ 1763  git checkout feat/xx
+ 1764  git rebase master
+ ...
+ 1772  git rebase --continue
+```
+这个git rebaes的作用，是将feat/xx分支的更改，应用到master分支的最新提交之上。
+git rebase master 命令的作用是将 feat/management 分支的提交重新应用到 master 分支的最新提交之上。这可以被视为一种将分支上的更改"迁移"到另一条更为最新的基础线上的操作。具体步骤如下：
+
+首先，Git 会将 feat/management 分支上的所有提交（即 master 分支从你创建 feat/management 分支后所新增的提交）保存到临时区域。
+然后，Git 会将 feat/management 分支的基线移动到 master 分支的最新提交。
+最后，Git 会将临时区域中的提交依次应用到新的基线上。
+这样做的结果是，你的 feat/management 分支会包含所有 master 分支上的最新更改，而你的开发历史会显得更加线性和整洁。
+
+以下是两种行为的时间线对比：
+对于git rebase master
+```
+时间线:
+1. 在 `feat/management` 上进行开发
+A - B - C (master)
+          \
+           D - E (feat/management)
+
+2. `master` 上有新的提交
+A - B - C - F - G (master)
+          \
+           D - E (feat/management)
+
+3. `feat/management` 执行 `git rebase master`
+A - B - C - F - G (master)
+                    \
+                     D' - E' (feat/management)
+```
+
+对于git merge master
+```
+时间线:
+1. 在 `feat/management` 上进行开发
+A - B - C (master)
+          \
+           D - E (feat/management)
+
+2. `master` 上有新的提交
+A - B - C - F - G (master)
+          \
+           D - E (feat/management)
+
+3. `feat/management` 执行 `git merge master`
+A - B - C - F - G (master)
+          \         \
+           D - E ----H (feat/management)
+
+```
+
+总结：选择 rebase 还是 merge 取决于你的团队工作流程和对提交历史整洁度的需求。rebase 更适合于保持线性历史和简洁的提交记录，而 merge 更适合于保留完整的开发过程历史。
+
+
+
+
+
+
