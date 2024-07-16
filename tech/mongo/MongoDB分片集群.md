@@ -10,7 +10,7 @@ MongoDB的由副本集保证高可用，由分片集群保证可扩展性。
 - 写IOPS超出单个MongoDB节点的写服务能力
 #### 分片集群的结构
 多个节点构成一个副本集（避免单点故障，高可用），可以将一个副本集`sh.addSharding()`作为一个分片。多个分片构成分片集群，通过`mongos`作为集群的访问入口，`mongos`进行路由而不实际持久化数据，集群的元数据存储在`config server`中。
-![image.png](../static/img/%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A41.png)
+![image.png](../../static/img/%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A41.png)
 #### 范围分片
 对于关键字`key`，将其以范围分配在不同的`chunk`中，每一个`chunk`会记录`$min~$max`对应的`key`，这些信息存储在`config server`中，当查询『key在xx~xx之间所有文档时』，`mongos`就能直接将请求路由到某一个`chunk`。
 #### 哈希分片
